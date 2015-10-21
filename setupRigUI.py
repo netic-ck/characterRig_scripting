@@ -13,28 +13,28 @@ Based in the book "MEL Scripting a Character Rig in Maya 2008"
 
 import maya.cmds as cmds
 
-def checkCharName():
+def checkCharName(*args):
     '''
     This function finds the name of the character
     '''
     pass
 
 
-def setCharName():
+def setCharName(*args):
     '''
     This function sets the name of the character
     '''
     pass
 
 
-def setNamespace():
+def setNamespace(*args):
     '''
     This function sets the a namespace for the character
     '''
     pass
 
 
-def setupRigUI():
+def setupRigUI(*args):
     '''
     This function launches the SetupRigUI
     '''
@@ -59,7 +59,7 @@ def setupRigUI():
     blends_btn = 'cRig_blendWrap_btn'
     smoothWts_btn = 'cRig_smoothWeights_btn'
     feedback = 'cRig_bindFeedback'
-    config_radio = 'cRig_config_radio'
+    config_radioGrp = 'cRig_config_radioGrp'
     color_btn = 'cRig_colorPick_btn'
     charGui_btn = 'cRig_charGui_btn'
 
@@ -75,8 +75,8 @@ def setupRigUI():
     #crete window
     cmds.window(name_win,
                 title='Rig Creator v0.1',
-                width=323,
-                height=362,
+                width=400,
+                height=600,
                 sizeable=False,
                 toolbox=True,
                 menuBar=True)
@@ -96,7 +96,88 @@ def setupRigUI():
               l='2a.Select the main skin node, and click button:')
 
     cmds.button(checkChar_btn, w=300, p=main_layout, bgc=(0.0, 1.0, 0.0),
-                l='Query skin name...', c='cm_checkCharName')
+                l='Query skin name...', c=checkCharName)
+
+
+    #Set the name to be used for the top node and namespace:
+    cmds.text(w=300, p=main_layout, l=' ' + warning1)
+    cmds.text(w=400, p=main_layout, fn='smallBoldLabelFont', al='left',
+              l='2b.Use the field name, or type in new name:')
+
+    #Text field for the rig name:
+    cmds.textField(name_txt, w=300, p=main_layout, en=False, tx='Name of Character')
+    cmds.button(setChar_btn, w=300, p=main_layout, bgc=(1.0, 0.0, 0.0), en=False,
+                l='Set Rig Name!', c=setCharName)
+
+    #GUI controls to run all the basic rig scripts:
+    cmds.text(w=400, p=main_layout, fn='smallBoldLabelFont', al='left',
+              l='3.Click the button to create the basic rig:')
+
+    #Button to create the entire basic IK rig:
+    cmds.button(basRig_btn, w=300, p=main_layout, bgc=(1.0, 0.0, 0.0), en=False,
+                l='Create Basic Rig!', c="source Cmaraffi_basicIkRig")
+
+    #GUI controls to run the advanced arm rig script:
+    cmds.text(w=400, p=main_layout, fn='smallBoldLabelFont', al='left',
+              l='4.Click the button to add the advanced Arm rig:')
+
+    #Button to add the advanced arm rig:
+    cmds.button(armRig_btn, w=300, p=main_layout, bgc=(1.0, 0.0, 0.0), en=False,
+                l='Create Arm Rig!', c="source Cmaraffi_advArms")
+
+    #GUI controls to run the advanced leg rig script:
+    cmds.text(w=400, p=main_layout, fn='smallBoldLabelFont', al='left',
+              l='5.Click the button to add the advanced Leg rig:')
+    cmds.button(legRig_btn, w=300, p=main_layout, bgc=(1.0, 0.0, 0.0), en=False,
+                l='Create Leg Rig!', c="source Cmaraffi_advLegs")
+
+    #GUI controls to run the advanced head rig script:
+    cmds.text(w=400, p=main_layout, fn='smallBoldLabelFont', al='left',
+              l='6.Click the button to add the advanced Head rig:')
+    cmds.button(headRig_btn, w=300, p=main_layout, bgc=(1.0, 0.0, 0.0), en=False,
+                l='Create Head Rig!', c="source Cmaraffi_advHead")
+
+    #GUI controls to run the advanced torso rig script:
+    cmds.text(w=400, p=main_layout, fn='smallBoldLabelFont', al='left',
+              l='7.Click the button to add the advanced Torso rig:')
+    cmds.button(torsoRig_btn, w=300, p=main_layout, bgc=(1.0, 0.0, 0.0), en=False,
+                l='Create Torso Rig!', c="source Cmaraffi_advTorso")
+
+    #GUI controls to run the bind rig script:
+    cmds.text(w=400, p=main_layout, fn='smallBoldLabelFont', al='left',
+              l='8.Deform the skin through binding and blend shapes:')
+
+    #Check boxes and buttons for binding the rig:
+    cmds.checkBox(bind_chb, v=False, en=False, l='Bind Skin to Rig!',
+                  onc="cm_bindSkin(0)", ofc="cm_bindDetach(0)")
+    cmds.text(feedback, w=300, p=main_layout, l=' ')
+    cmds.checkBox(proxy_chb, v=False, en=False, l='Bind Proxy Skin!',
+                  onc="cm_bindSkin(1)", ofc="cm_bindDetach(1)")
+
+    cmds.button(applyWts_btn, w=300, p=main_layout, bgc=(1.0, 0.0, 0.0), en=False,
+                l='Apply Proxy Weights from File!', c="cm_getProxyWts")
+    cmds.button(copyWts_btn, w=300, p=main_layout, bgc=(1.0, 0.0, 0.0), en=False,
+                l='Copy Proxy Weights to Skin!', c="cm_copyWeights")
+    cmds.button(blends_btn, w=300, p=main_layout, bgc=(1.0, 0.0, 0.0), en=False,
+                l='Add Face Blend Shapes!', c="cm_blendWrap")
+    cmds.button(smoothWts_btn, w=300, p=main_layout, bgc=(1.0, 0.0, 0.0), en=False,
+                l='Smooth Final Skin Weights!', c="cm_smoothWts")
+
+    #GUI controls to run the advanced character GUI scripts:
+    cmds.text(w=400, p=main_layout, fn='smallBoldLabelFont', al='left',
+              l='9.Create a character control Gui:')
+
+    cmds.radioButtonGrp(config_radioGrp, p=main_layout, sl=0, nrb=3, cal=[1, "left"],
+                        en=False, cw4=[100, 70, 70, 70], l='Set main config:', la3=["Left3", "Right3", "Quad"],
+                        on1 = "button -e -en 1 cm_charGuiButton",
+                        on2 = "button -e -en 1 cm_charGuiButton",
+                        on3 = "button -e -en 1 cm_charGuiButton")
+
+    #Button to open color picker for GUI background color:
+    cmds.button(color_btn, w=300, p=main_layout, bgc=(1.0, 0.0, 0.0), en=False,
+                l='Choose GUI Color!', c="cm_setColor(1)")
+    cmds.button(charGui_btn, w=300, p=main_layout, bgc=(1.0, 0.0, 0.0), en=False,
+                l='Create Character GUI!', c="source Cmaraffi_characterGui; cm_characterGui;")
 
     # --------------------------------------------------
 
@@ -106,121 +187,10 @@ def setupRigUI():
 
     # --------------------------------------------------
 
+setupRigUI()
+
 
 '''
-//4. Main global procedure to run setup Gui window:
-global proc cm_setupRigGui (){//Open procedure...
- //Declare unique GUI strings for the path and names:
-   string $defaultPath = "C:/CMaraffi_bookFiles/";
-   string $nameWin = "cm_setupGuiWin";
-   string $pathField = "cm_pathField";
-   string $nameField = "cm_nameField";
-   string $warning1 = "cm_guiWarning1";
-   string $checkCharButt = "cm_checkCharButton";
-   string $setCharButt = "cm_setCharacterButton";
-   string $basRigButt = "cm_basicIkRigButton";
-   string $armRigButt = "cm_advArmRigButton";
-   string $legRigButt = "cm_advLegRigButton";
-   string $headRigButt = "cm_advHeadRigButton";
-   string $torsoRigButt = "cm_advTorsoRigButton";
-   string $bindCheckBox = "cm_bindCheckBox";
-   string $proxyCheckBox = "cm_proxyCheckBox";
-   string $applyWtsButt = "cm_applyWeightsButton";
-   string $copyWtsButt = "cm_proxyWeightsButton";
-   string $blendsButt = "cm_blendWrapButton";
-   string $smoothWtsButt = "cm_smoothWeightsButton";
-   string $feedback = "cm_bindFeedback";
-   string $configRadios = "cm_configRadios";
-   string $colorButt = "cm_colorPickButton";
-   string $charGuiButt = "cm_charGuiButton";
- //----------------------------------------------------------------------
- //Create the main setup GUI window:
-   if(`window -ex $nameWin`) deleteUI $nameWin;
-   window -t "CMaraffi Rig Creator" $nameWin;
-   string $layout = `columnLayout -p $nameWin`;
- //Create controls for running the rig scripts:
-   text -w 400 -p $layout -fn "smallBoldLabelFont" -al "left"
-          -l "1.Type in the pathway to your rig files:";
- //Text field for to set directory path for all files:
-   textField -w 300 -p $layout -tx $defaultPath $pathField;
-   text -w 400 -p $layout -fn "smallBoldLabelFont" -al "left"
-          -l "2a.Select the main skin node, and click button:";
-   button -w 300 -p $layout -bgc 0.0 1.0 0.0 -l "Query skin name..."
-          -c "cm_checkCharName" $checkCharButt;
- //----------------------------------------------------------------------
- //Set the name to be used for the top node and namespace:
-   text -w 300 -p $layout -l " " $warning1;
-   text -w 400 -p $layout -fn "smallBoldLabelFont" -al "left"
-          -l "2b.Use the field name, or type in new name:";
- //Text field for the rig name:
-   textField  -w 300 -p $layout -tx "Name of Character" -en 0 $nameField;
-   button -w 300 -p $layout -bgc 1.0 0.0 0.0 -en 0 -l "Set Rig Name!"
-          -c "cm_setCharName" $setCharButt;
- //----------------------------------------------------------------------
- //GUI controls to run all the basic rig scripts:
-   text -w 400 -p $layout -fn "smallBoldLabelFont" -al "left"
-         -l "3.Click the button to create the basic rig:";
- //Button to create the entire basic IK rig:
-   button -w 300 -p $layout -bgc 1.0 0.0 0.0 -en 0 -l "Create Basic Rig!"
-           -c "source Cmaraffi_basicIkRig" $basRigButt;
- //----------------------------------------------------------------------
- //GUI controls to run the advanced arm rig script:
-   text -w 400 -p $layout -fn "smallBoldLabelFont" -al "left"
-         -l "4.Click the button to add the advanced Arm rig:";
- //Button to add the advanced arm rig:
-   button -w 300 -p $layout -bgc 1.0 0.0 0.0 -l "Create Arm Rig!"
-            -en 0 -c "source Cmaraffi_advArms" $armRigButt;
- //----------------------------------------------------------------------
- //GUI controls to run the advanced leg rig script:
-   text -w 400 -p $layout -fn "smallBoldLabelFont" -al "left"
-         -l "5.Click the button to add the advanced Leg rig:";
-   button -w 300 -p $layout -bgc 1.0 0.0 0.0 -l "Create Leg Rig!"
-            -en 0 -c "source Cmaraffi_advLegs" $legRigButt;
- //----------------------------------------------------------------------
- //GUI controls to run the advanced head rig script:
-   text -w 400 -p $layout -fn "smallBoldLabelFont" -al "left"
-         -l "6.Click the button to add the advanced Head rig:";
-   button -w 300 -p $layout -bgc 1.0 0.0 0.0 -l "Create Head Rig!"
-            -en 0 -c "source Cmaraffi_advHead" $headRigButt;
- //----------------------------------------------------------------------
- //GUI controls to run the advanced torso rig script:
-   text -w 400 -p $layout -fn "smallBoldLabelFont" -al "left"
-         -l "7.Click the button to add the advanced Torso rig:";
-   button -w 300 -p $layout -bgc 1.0 0.0 0.0 -l "Create Torso Rig!"
-            -en 0 -c "source Cmaraffi_advTorso" $torsoRigButt;
- //----------------------------------------------------------------------
- //GUI controls to run the bind rig script:
-   text -w 400 -p $layout -fn "smallBoldLabelFont" -al "left"
-         -l "8.Deform the skin through binding and blend shapes:";
- //Check boxes and buttons for binding the rig:
-   checkBox -v 0 -l "Bind Skin to Rig!" -en 0 -onc "cm_bindSkin(0)"
-            -ofc "cm_bindDetach(0)" $bindCheckBox;
-   text -w 300 -p $layout -l " " $feedback;
-   checkBox -v 0 -l "Bind Proxy Skin!" -en 0 -onc "cm_bindSkin(1)"
-            -ofc "cm_bindDetach(1)" $proxyCheckBox;
-   button -w 300 -p $layout -bgc 1.0 0.0 0.0 -l "Apply Proxy Weights from File!"
-            -en 0 -c "cm_getProxyWts" $applyWtsButt;
-   button -w 300 -p $layout -bgc 1.0 0.0 0.0 -l "Copy Proxy Weights to Skin!"
-            -en 0 -c "cm_copyWeights" $copyWtsButt;
-   button -w 300 -p $layout -bgc 1.0 0.0 0.0 -l "Add Face Blend Shapes!"
-            -en 0 -c "cm_blendWrap" $blendsButt;
-   button -w 300 -p $layout -bgc 1.0 0.0 0.0 -l "Smooth Final Skin Weights!"
-            -en 0 -c "cm_smoothWts" $smoothWtsButt;
- //----------------------------------------------------------------------
- //GUI controls to run the advanced character GUI scripts:
-   text -w 400 -p $layout -fn "smallBoldLabelFont" -al "left"
-         -l "9.Create a character control Gui:";
-   radioButtonGrp -p $layout -sl 0 -nrb 3 -cal 1 "left" -cw4 100 70 70 70
-	-en 0 -l "Set main config:" -la3 "Left3" "Right3" "Quad"
-	-on1 "button -e -en 1 cm_charGuiButton"
-	-on2 "button -e -en 1 cm_charGuiButton"
-	-on3 "button -e -en 1 cm_charGuiButton" $configRadios;
- //Button to open color picker for GUI background color:
-   button -w 300 -p $layout -bgc 1.0 0.0 0.0 -l "Choose GUI Color!"
-            -en 0 -c "cm_setColor(1)" $colorButt;
-   button -w 300 -p $layout -bgc 1.0 0.0 0.0 -l "Create Character GUI!"
-            -en 0 -c {"source Cmaraffi_characterGui; cm_characterGui;"}
-            $charGuiButt;
  //----------------------------------------------------------------------
    window -e -wh 325 600 -tlc 130 50 $nameWin;
    showWindow $nameWin;
